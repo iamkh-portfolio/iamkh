@@ -324,28 +324,69 @@ window.addEventListener("load", () => {
 });
 
 /* ============================================================
-   CONTACT FORM (DEMO FRONT-END)
+CONTACT FORM (WEB3FORMS)
 ============================================================ */
-const contactForm = $("#contactForm");
-const formNote = $("#formNote");
+const form = document.getElementById("contactForm");
+const formNote = document.getElementById("formNote");
+const submitBtn = form?.querySelector('button[type="submit"]');
 
-contactForm?.addEventListener("submit", (e) => {
-  e.preventDefault();
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const name = $("#name", contactForm)?.value.trim();
-  const email = $("#email", contactForm)?.value.trim();
-  const message = $("#message", contactForm)?.value.trim();
+    // Récupérer les valeurs (au cas où)
+    const name = form.querySelector("#name")?.value.trim();
+    const email = form.querySelector("#email")?.value.trim();
+    const message = form.querySelector("#message")?.value.trim();
 
-  if (!name || !email || !message) {
-    if (formNote) formNote.textContent = "Merci de remplir tous les champs.";
-    return;
-  }
+    if (!name || !email || !message) {
+      if (formNote) formNote.textContent = "Merci de remplir tous les champs.";
+      return;
+    }
 
-  if (formNote) {
-    formNote.textContent = "Message envoyé ✅";
-  }
-  contactForm.reset();
-});
+    // Préparer FormData
+    const formData = new FormData(form);
+
+    // Sécuriser l’access key (optionnel, mais utile si elle n’est pas envoyée)
+    // (dans ton HTML elle est bien en hidden, donc normalement pas besoin)
+    if (!formData.get("access_key")) {
+      formData.append("access_key", "1ec6557f-d608-439e-86f5-c253c82e30c1");
+    }
+
+    // UI
+    if (formNote) formNote.textContent = "Envoi en cours...";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.originalText = submitBtn.textContent;
+      submitBtn.textContent = "Sending...";
+    }
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        if (formNote) formNote.textContent = "Message envoyé ✅";
+        form.reset();
+      } else {
+        if (formNote) formNote.textContent = "Erreur : " + (data.message || "Envoi impossible");
+      }
+    } catch (err) {
+      console.error(err);
+      if (formNote) formNote.textContent = "Une erreur réseau s'est produite. Réessayez.";
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitBtn.dataset.originalText || "Envoyer";
+      }
+    }
+  });
+}
+
 
 /* ============================================================
    FOOTER YEAR
