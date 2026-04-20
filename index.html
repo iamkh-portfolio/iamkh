@@ -153,6 +153,36 @@
     </div>
   </section>
 
+<!-- CV notice modal -->
+<div id="cvNoticeModal" class="cv-notice-modal" aria-hidden="true">
+  <div class="cv-notice-box" role="dialog" aria-modal="true" aria-labelledby="cvNoticeTitle">
+    <div class="cv-notice-header">
+      <h3 id="cvNoticeTitle" data-fr="Accès au CV" data-en="CV Access">Accès au CV</h3>
+      <button type="button" class="cv-notice-close" id="cvNoticeClose" aria-label="Fermer">
+        ✕
+      </button>
+    </div>
+
+    <p class="cv-notice-text" data-fr="Pour recevoir mon CV, merci de m’envoyer un message via le formulaire de contact."
+       data-en="To receive my CV, please send me a message using the contact form.">
+      Pour recevoir mon CV, merci de m’envoyer un message via le formulaire de contact.
+    </p>
+
+    <div class="cv-notice-actions">
+      <a href="#contact" class="btn-primary btn-anim" id="cvNoticeGoContact">
+        <span class="btn-spark"></span>
+        <span class="btn-backdrop"></span>
+        <span class="btn-label" data-fr="Aller au contact" data-en="Go to contact">Aller au contact</span>
+      </a>
+
+      <button type="button" class="btn-ghost" id="cvNoticeDismiss">
+        <span data-fr="Pas maintenant" data-en="Not now">Pas maintenant</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
 <!-- A PROPOS -->
 <section id="about" class="section">
   <div class="container section-content">
