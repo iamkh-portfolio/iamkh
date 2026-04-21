@@ -790,6 +790,62 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  const el = document.querySelector(".typewriter-target");
+  if (!el) return;
+
+  const lang = (document.documentElement.lang || "fr").toLowerCase();
+
+  // FR : tes 2 phrases
+const lines = {
+  fr: [
+    "étudiant en master systèmes d'information et sécurité",
+    "alternant en tant que data analyst chez Orange Business Services"
+  ],
+  en: [
+    "student in a Master’s in Information Systems and Security",
+    "data Analyst apprentice at Orange Business Services"
+  ]
+};
+
+  const phrases = lines[lang.startsWith("en") ? "en" : "fr"] || lines.fr;
+
+  let lineIndex = 0;
+  let charIndex = 0;
+  let deleting = false;
+
+  const typingSpeed = 35;
+  const deletingSpeed = 20;
+  const holdAfterTyped = 1200;
+
+  function tick() {
+    const current = phrases[lineIndex];
+
+    if (!deleting) {
+      charIndex++;
+      el.textContent = current.slice(0, charIndex);
+
+      if (charIndex >= current.length) {
+        deleting = true;
+        setTimeout(tick, holdAfterTyped);
+      } else {
+        setTimeout(tick, typingSpeed);
+      }
+    } else {
+      charIndex--;
+      el.textContent = current.slice(0, charIndex);
+
+      if (charIndex <= 0) {
+        deleting = false;
+        lineIndex = (lineIndex + 1) % phrases.length;
+      }
+      setTimeout(tick, deletingSpeed);
+    }
+  }
+
+  tick();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".exp-filter");
   const cards = document.querySelectorAll(".experience-card");
 
