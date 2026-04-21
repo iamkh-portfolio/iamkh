@@ -147,68 +147,6 @@ langToggle?.addEventListener("click", () => {
   window.location.reload();
 });
 
-
-/* ============================================================
-   TYPEWRITER
-============================================================ */
-const typewriterEl = $(".typewriter-target");
-const typewriterPhrases = {
-  fr: [
-    "étudiant en Master Systèmes d’Information et Sécurité",
-    "alternant data analyst chez Orange",
-  ],
-  en: [
-    "student in Master's degree in Information Systems and Security",
-    "data analyst apprentice at Orange Business",
-  ]
-};
-
-if (typewriterEl) {
-  let phrases = typewriterPhrases[document.documentElement.lang === "en" ? "en" : "fr"];
-  let pIdx = 0;
-  let cIdx = 0;
-  let deleting = false;
-  let timerId = null;
-
-  function step() {
-    const current = phrases[pIdx];
-
-    if (!deleting) {
-      cIdx++;
-      typewriterEl.textContent = current.slice(0, cIdx);
-      if (cIdx >= current.length) {
-        deleting = true;
-        timerId = setTimeout(step, 1400);
-        return;
-      }
-      timerId = setTimeout(step, 55);
-    } else {
-      cIdx--;
-      typewriterEl.textContent = current.slice(0, cIdx);
-      if (cIdx <= 0) {
-        deleting = false;
-        pIdx = (pIdx + 1) % phrases.length;
-        timerId = setTimeout(step, 250);
-        return;
-      }
-      timerId = setTimeout(step, 30);
-    }
-  }
-
-  function resetTypewriterForLang() {
-    clearTimeout(timerId);
-    phrases = typewriterPhrases[document.documentElement.lang === "en" ? "en" : "fr"];
-    pIdx = 0;
-    cIdx = 0;
-    deleting = false;
-    typewriterEl.textContent = "";
-    timerId = setTimeout(step, 250);
-  }
-
-  window.__twReset = resetTypewriterForLang;
-  timerId = setTimeout(step, 700);
-}
-
 /* ============================================================
    REVEAL (global observer)
 ============================================================ */
@@ -484,287 +422,327 @@ window.addEventListener("resize", update3DByViewport, { passive: true });
 document.addEventListener("visibilitychange", handleVisibility3D);
 langToggle?.addEventListener("click", () => setTimeout(sync3DLang, 0));
 
-/* ============================================================
-   EXPERIENCE: TYPEWRITERS + FILTERS
-============================================================ */
-document.addEventListener("DOMContentLoaded", () => {
-  const langToggle = document.getElementById("langToggle");
-  // langToggle n'est pas utilisé ici; je le laisse si tu l’utilises ailleurs
 
-  /* ---------------------------
-     1) Typewriter: spécialisation (FR / EN + reset)
-  ---------------------------- */
-  (function initExperienceTypewriter() {
-    const target = document.querySelector(".experience-typewriter-target");
-    if (!target) return;
+/* ---------------------------
+   Typewriter: Spécialisation Master (FR / EN + reset)
+---------------------------- */
+(function initUsthbMasterTypewriters() {
+  // 1) Spécialisation
+  const specEl = document.querySelector(".usthb-master-typewriter");
+  // 2) Classement
+  const rankEl = document.querySelector(".usthb-ranking-typewriter");
 
-    const wordsFR = [
-    "Électronique embarquée",
-    "Microcontrôleurs & C",
-    "Systèmes temps réel",
-    "Bus & Protocoles",
-    "Conception FPGA"
-    ];
+  if (!specEl && !rankEl) return;
 
-    const wordsEN = [
-    "Embedded Electronics",
-    "Microcontrollers & C",
-    "Real-Time Systems",
-    "Buses & Protocols",
-    "FPGA Design"
-    ];
-
-    let w = 0;
-    let c = 0;
-    let deleting = false;
-    let timer = null;
-
-    const getLang = () => (document.documentElement.lang === "en" ? "en" : "fr");
-    const getWords = () => (getLang() === "en" ? wordsEN : wordsFR);
-
-    function clearTimer() {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-    }
-
-    function tick() {
-      const words = getWords();
-
-      if (w >= words.length) w = 0;
-      const word = words[w];
-
-      if (!deleting) {
-        c++;
-        target.textContent = word.slice(0, c);
-
-        if (c === word.length) {
-          deleting = true;
-          timer = setTimeout(tick, 1100);
-          return;
-        }
-      } else {
-        c--;
-        target.textContent = word.slice(0, c);
-
-        if (c === 0) {
-          deleting = false;
-          w = (w + 1) % words.length;
-        }
-      }
-
-      timer = setTimeout(tick, deleting ? 45 : 75);
-    }
-
-    function resetExperienceTypewriter() {
-      clearTimer();
-      w = 0;
-      c = 0;
-      deleting = false;
-      target.textContent = "";
-      tick();
-    }
-
-    // chaînage avec d'éventuels autres resets (lang change)
-    const previousReset = window.__twReset;
-    window.__twReset = function () {
-      if (typeof previousReset === "function") previousReset();
-      resetExperienceTypewriter();
-    };
-
-    tick();
-  })();
-
-
-  /* ---------------------------
-     2) Typewriter: classement USTHB (FR / EN + reset)
-  ---------------------------- */
-  (function initAcademicRankingTypewriter() {
-    const target = document.querySelector(".experience-ranking-typewriter");
-    if (!target) return;
-
-    const textsFR = [
+  const typewriterPhrases = {
+    // Affichage après "Spécialisation dans"
+    fr: {
+      spec: [
+        "la conception de systèmes embarqués et de systèmes informatiques fiables et robustes.",
+        "le développement de systèmes de contrôle et d’automatisation.",
+        "l’optimisation des performances en temps réel.",
+      ],
+      rank: [
+    "parmi les meilleures universités du pays.",
     "1ère au niveau maghrébin en génie électrique et électronique.",
     "parmi les 401–450 meilleures universités au monde en génie électrique et électronique.",
     "1ère au niveau maghrébin en informatique et systèmes d’information.",
     "parmi les 401–450 meilleures universités au monde en informatique et systèmes d’information."
-    ];
-
-    const textsEN = [
+      ]
+    },
+    // Display after "Specialized in"
+    en: {
+      spec: [
+        "design of reliable and robust embedded and computer systems.",
+        "development of control and automation systems.",
+        "optimization of real-time performance.",
+      ],
+      rank: [
+    "among the leading universities in the country.",
     "ranked first in the Maghreb in Electrical and Electronic Engineering.",
     "ranked among the world’s top 401–450 universities in Electrical and Electronic Engineering.",
     "ranked first in the Maghreb in Computer Science and Information Systems.",
     "ranked among the world’s top 401–450 universities in Computer Science and Information Systems."
-    ];
+      ]
+    }
+  };
 
-    let i = 0;
-    let j = 0;
+  const lang = document.documentElement.lang === "en" ? "en" : "fr";
+
+  function createTypewriter(el, phrases) {
+    if (!el) return;
+
+    let pIdx = 0;
+    let cIdx = 0;
+    let deleting = false;
+    let timerId = null;
+
+    function step() {
+      const current = phrases[pIdx];
+
+      if (!deleting) {
+        cIdx++;
+        el.textContent = current.slice(0, cIdx);
+
+        if (cIdx >= current.length) {
+          deleting = true;
+          timerId = setTimeout(step, 1200);
+          return;
+        }
+        timerId = setTimeout(step, 45);
+      } else {
+        cIdx--;
+        el.textContent = current.slice(0, cIdx);
+
+        if (cIdx <= 0) {
+          deleting = false;
+          pIdx = (pIdx + 1) % phrases.length;
+          timerId = setTimeout(step, 250);
+          return;
+        }
+        timerId = setTimeout(step, 25);
+      }
+    }
+
+    function reset() {
+      clearTimeout(timerId);
+      pIdx = 0;
+      cIdx = 0;
+      deleting = false;
+      el.textContent = "";
+      timerId = setTimeout(step, 250);
+    }
+
+    // Démarrage
+    timerId = setTimeout(step, 600);
+
+    return reset;
+  }
+
+  // Instanciation
+  const resetSpec = createTypewriter(specEl, typewriterPhrases[lang].spec);
+  const resetRank = createTypewriter(rankEl, typewriterPhrases[lang].rank);
+
+  // Si ton site déclenche un reset global (comme dans ton script précédent)
+  const previousReset = window.__twReset;
+  window.__twReset = function () {
+    if (typeof previousReset === "function") previousReset();
+    if (typeof resetSpec === "function") resetSpec();
+    if (typeof resetRank === "function") resetRank();
+  };
+})();
+
+/* ---------------------------
+   Typewriter: Spécialisation Licence (FR / EN + reset)
+---------------------------- */
+(function () {
+  // Helpers
+  const getLang = () =>
+    (document.documentElement.lang || "fr").toLowerCase().startsWith("en") ? "en" : "fr";
+
+  const lang = getLang();
+
+  // ====== Specialization typewriter ======
+  const specEl = document.querySelector(".usthb-lic-specialization-typewriter");
+  if (specEl) {
+    const specializationTexts = {
+      fr: [
+        "la conception et l’analyse de systèmes.",
+        "le traitement de l’information et l’automatisation.",
+        "le contrôle et la sécurité des systèmes."
+      ],
+      en: [
+        "system design and analysis.",
+        "information processing and automation.",
+        "system control and security."
+      ]
+    };
+    const phrases = specializationTexts[lang] || specializationTexts.fr;
+
+    let phraseIndex = 0;
+    let charIndex = 0;
     let deleting = false;
     let timer = null;
 
-    const getLang = () => (document.documentElement.lang === "en" ? "en" : "fr");
-    const getTexts = () => (getLang() === "en" ? textsEN : textsFR);
-
-    function clearTimer() {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-    }
-
     function tick() {
-      const texts = getTexts();
-
-      if (i >= texts.length) i = 0;
-      const current = texts[i];
+      const current = phrases[phraseIndex];
 
       if (!deleting) {
-        j++;
-        target.textContent = current.slice(0, j);
+        charIndex++;
+        specEl.textContent = current.slice(0, charIndex);
 
-        if (j === current.length) {
+        if (charIndex >= current.length) {
           deleting = true;
-          timer = setTimeout(tick, 1500);
+          timer = setTimeout(tick, 1200);
           return;
         }
+        timer = setTimeout(tick, 35);
       } else {
-        j--;
-        target.textContent = current.slice(0, j);
+        charIndex--;
+        specEl.textContent = current.slice(0, charIndex);
 
-        if (j === 0) {
+        if (charIndex <= 0) {
           deleting = false;
-          i = (i + 1) % texts.length;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
         }
+        timer = setTimeout(tick, 20);
       }
-
-      timer = setTimeout(tick, deleting ? 20 : 32);
     }
 
-    function resetRankingTypewriter() {
-      clearTimer();
-      i = 0;
-      j = 0;
+    function reset() {
+      if (timer) clearTimeout(timer);
+      phraseIndex = 0;
+      charIndex = 0;
       deleting = false;
-      target.textContent = "";
-      tick();
+      specEl.textContent = "";
+      timer = setTimeout(tick, 300);
     }
 
-    const previousReset = window.__twReset;
-    window.__twReset = function () {
-      if (typeof previousReset === "function") previousReset();
-      resetRankingTypewriter();
+    reset();
+  }
+
+  // ====== Ranking typewriter ======
+  const rankEl = document.querySelector(".usthb-lic-ranking-typewriter");
+  if (rankEl) {
+    const rankTexts = {
+      fr: [
+        "parmi les meilleures universités du pays",
+        "reconnue pour la qualité de ses formations",
+        "et son expertise en recherche scientifique",
+        "avec une forte attractivité académique"
+      ],
+      en: [
+        "among the leading universities in the country",
+        "recognized for the quality of its programs",
+        "and its expertise in scientific research",
+        "with strong academic attractiveness"
+      ]
     };
 
-    tick();
-  })();
+    const phrases = rankTexts[lang] || rankTexts.fr;
+
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+    let timer = null;
+
+    function tickRank() {
+      const current = phrases[phraseIndex];
+
+      if (!deleting) {
+        charIndex++;
+        rankEl.textContent = current.slice(0, charIndex);
+
+        if (charIndex >= current.length) {
+          deleting = true;
+          timer = setTimeout(tickRank, 1100);
+          return;
+        }
+        timer = setTimeout(tickRank, 35);
+      } else {
+        charIndex--;
+        rankEl.textContent = current.slice(0, charIndex);
+
+        if (charIndex <= 0) {
+          deleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+        timer = setTimeout(tickRank, 20);
+      }
+    }
+
+    function resetRank() {
+      if (timer) clearTimeout(timer);
+      phraseIndex = 0;
+      charIndex = 0;
+      deleting = false;
+      rankEl.textContent = "";
+      timer = setTimeout(tickRank, 250);
+    }
+
+    resetRank();
+  }
+})();
 
 
 /* ---------------------------
-     RNCP 39394 Typewriter (FR / EN + reset)
-  ---------------------------- */
-(function initRncpObjectifTypewriter() {
-  const target = document.querySelector(".rncp-objectif-typewriter");
-  if (!target) return;
+   Typewriter: Esic (FR / EN + reset)
+---------------------------- */
+(function initEsicRncpTypewriter() {
+  const el = document.querySelector(".rncp-objectif-typewriter");
+  if (!el) return;
 
-  const objectifsFR = [
-    "gérer des systèmes d’information complexes.",
-    "maîtriser la cybersécurité.",
-    "concevoir des solutions informatiques sécurisées.",
-    "diriger des projets informatiques.",
-    "s’adapter aux évolutions technologiques."
+  const typewriterPhrases = {
+    fr: [
+      "gérer des systèmes d'information complexes.",
+      "concevoir des solutions informatiques sécurisées.",
+      "diriger des projets informatiques.",
+      "s'adapter aux évolutions technologiques."
+    ],
+    en: [
+      "manage complex information systems.",
+      "design secure IT solutions.",
+      "lead IT projects.",
+      "adapt to technological evolutions."
+    ]
+  };
+
+  let phrases = typewriterPhrases[
+    document.documentElement.lang === "en" ? "en" : "fr"
   ];
 
-  const objectifsEN = [
-    "manage complex information systems.",
-    "master cybersecurity.",
-    "design secure IT solutions.",
-    "lead IT projects.",
-    "adapt to technological evolutions."
-  ];
+  let pIdx = 0;
+  let cIdx = 0;
+  let deleting = false;
+  let timerId = null;
 
-  let i = 0, j = 0, deleting = false, timer = null;
-
-  const getLang = () => (document.documentElement.lang === "en" ? "en" : "fr");
-  const getTexts = () => (getLang() === "en" ? objectifsEN : objectifsFR);
-
-  function clearTimer() {
-    if (timer) clearTimeout(timer);
-    timer = null;
-  }
-
-  function tick() {
-    const texts = getTexts();
-    if (i >= texts.length) i = 0;
-
-    const current = texts[i];
+  function step() {
+    const current = phrases[pIdx];
 
     if (!deleting) {
-      j++;
-      target.textContent = current.slice(0, j);
+      cIdx++;
+      el.textContent = current.slice(0, cIdx);
 
-      if (j === current.length) {
+      if (cIdx >= current.length) {
         deleting = true;
-        timer = setTimeout(tick, 1100);
+        timerId = setTimeout(step, 1200);
         return;
       }
+      timerId = setTimeout(step, 45);
     } else {
-      j--;
-      target.textContent = current.slice(0, j);
+      cIdx--;
+      el.textContent = current.slice(0, cIdx);
 
-      if (j === 0) {
+      if (cIdx <= 0) {
         deleting = false;
-        i = (i + 1) % texts.length;
+        pIdx = (pIdx + 1) % phrases.length;
+        timerId = setTimeout(step, 250);
+        return;
       }
+      timerId = setTimeout(step, 25);
     }
-
-    timer = setTimeout(tick, deleting ? 25 : 55);
   }
 
-  function resetRncpObjectifTypewriter() {
-    clearTimer();
-    i = 0; j = 0; deleting = false;
-    target.textContent = "";
-    tick();
+  function resetTypewriterForLang() {
+    clearTimeout(timerId);
+    phrases = typewriterPhrases[
+      document.documentElement.lang === "en" ? "en" : "fr"
+    ];
+    pIdx = 0;
+    cIdx = 0;
+    deleting = false;
+    el.textContent = "";
+    timerId = setTimeout(step, 250);
   }
 
   const previousReset = window.__twReset;
   window.__twReset = function () {
     if (typeof previousReset === "function") previousReset();
-    resetRncpObjectifTypewriter();
+    resetTypewriterForLang();
   };
 
-  tick();
+  timerId = setTimeout(step, 600);
 })();
-
-  /* ---------------------------
-     3) Filtres expériences
-  ---------------------------- */
-  const filterButtons = document.querySelectorAll(".exp-filter");
-  const cards = document.querySelectorAll(".experience-card");
-
-  if (!filterButtons.length || !cards.length) return;
-
-  filterButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      const filter = btn.dataset.filter?.trim();
-
-      cards.forEach((card) => {
-        const type = card.dataset.type?.trim();
-
-        if (filter === "all" || type === filter) {
-          card.classList.remove("is-hidden");
-        } else {
-          card.classList.add("is-hidden");
-        }
-      });
-    });
-  });
-});
-
 
   /* ---------------------------
      fenaitre 
