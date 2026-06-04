@@ -799,11 +799,11 @@ document.addEventListener("DOMContentLoaded", () => {
 const lines = {
   fr: [
     "étudiant en master systèmes d'information et sécurité",
-    "alternant en tant que data analyst chez Orange Business Services"
+    "stagiaire Data Analyst chez Orange Business"
   ],
   en: [
     "student in a Master’s in Information Systems and Security",
-    "data Analyst apprentice at Orange Business Services"
+    "data Analyst Intern at Orange Business Services"
   ]
 };
 
