@@ -798,12 +798,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // FR : tes 2 phrases
 const lines = {
   fr: [
-    "étudiant en master systèmes d'information et sécurité",
-    "stagiaire Data Analyst chez Orange Business"
+    "étudiant en Master 2 Systèmes d’Information et Sécurité",
+    "alternant Achats & Data Analyst chez Veolia Water Technologies"
   ],
   en: [
-    "student in a Master’s in Information Systems and Security",
-    "data Analyst Intern at Orange Business Services"
+    "Master’s 2 student in Information Systems and Security",
+    "Procurement & Data Analyst Apprentice at Veolia Water Technologies"
   ]
 };
 
@@ -878,3 +878,46 @@ document.addEventListener("DOMContentLoaded", () => {
   // initial
   applyFilter("all");
 });
+
+(function () {
+  const getLang = () =>
+    (document.documentElement.lang || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function startTypewriter(el) {
+    let lang = getLang(), i = 0, pos = 0, deleting = false, timer;
+
+    const phrases = () =>
+      (lang === 'en' ? el.dataset.typewriterEn : el.dataset.typewriterFr || '').split('|');
+
+    function tick() {
+      const list = phrases();
+      const phrase = list[i % list.length];
+
+      if (reduceMotion) { el.textContent = phrase; return; }
+
+      if (!deleting) {
+        el.textContent = phrase.slice(0, ++pos);
+        if (pos === phrase.length) { deleting = true; timer = setTimeout(tick, 1800); return; }
+        timer = setTimeout(tick, 60);
+      } else {
+        el.textContent = phrase.slice(0, --pos);
+        if (pos === 0) { deleting = false; i++; timer = setTimeout(tick, 400); return; }
+        timer = setTimeout(tick, 30);
+      }
+    }
+
+    // Redémarre quand la langue change
+    new MutationObserver(() => {
+      const newLang = getLang();
+      if (newLang !== lang) {
+        lang = newLang; i = 0; pos = 0; deleting = false;
+        clearTimeout(timer); el.textContent = ''; tick();
+      }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+
+    tick();
+  }
+
+  document.querySelectorAll('.js-typewriter').forEach(startTypewriter);
+})();
